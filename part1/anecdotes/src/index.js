@@ -15,7 +15,6 @@ const App = props => {
   const maxVotes = [...votes].sort((m, n) => n - m)[0];
   let mostVoted = votes.indexOf(maxVotes);
   mostVoted = mostVoted === -1 ? 0 : mostVoted;
-  console.log(maxVotes);
 
   const getRandomInt = max => Math.floor(Math.random() * Math.floor(max));
 
