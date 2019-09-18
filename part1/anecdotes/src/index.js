@@ -1,16 +1,28 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
+const Anecdote = ({ text, votes }) => (
+  <div>
+    <p>{text}</p>
+    <p>has {votes} votes</p>
+  </div>
+);
+
 const App = props => {
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState(Array(anecdotes.length));
+
+  const maxVotes = [...votes].sort((m, n) => n - m)[0];
+  let mostVoted = votes.indexOf(maxVotes);
+  mostVoted = mostVoted === -1 ? 0 : mostVoted;
+  console.log(maxVotes);
 
   const getRandomInt = max => Math.floor(Math.random() * Math.floor(max));
 
   return (
     <div>
-      <p>{props.anecdotes[selected]}</p>
-      <p>has {votes[selected] || 0} votes</p>
+      <h3>Anecdote of the day</h3>
+      <Anecdote text={props.anecdotes[selected]} votes={votes[selected] || 0} />
       <button
         onClick={() => {
           const copy = [...votes];
@@ -23,6 +35,11 @@ const App = props => {
       <button onClick={() => setSelected(getRandomInt(anecdotes.length))}>
         next anecdote
       </button>
+      <h3>Anecdote with most votes</h3>
+      <Anecdote
+        text={props.anecdotes[mostVoted]}
+        votes={votes[mostVoted] || 0}
+      />
     </div>
   );
 };
