@@ -7,6 +7,45 @@ const Filter = ({ filterValue, handleFilter }) => (
   </div>
 );
 
+const Weather = ({ city }) => {
+  const [weather, setWeather] = useState({
+    current: {
+      temperature: "",
+      weather_icons: [""],
+      wind_speed: "",
+      wind_dir: ""
+    }
+  });
+
+  useEffect(() => {
+    axios
+      .get(
+        `http://api.weatherstack.com/current?access_key=11179f1b387d34fd7cc1ce06b1b27c73&query=%22${city}%22`
+      )
+      .then(response => {
+        setWeather(response.data);
+      });
+  }, []);
+
+  return (
+    <div>
+      <h4>Weather in {city}</h4>
+      <p>
+        <strong>Temperature:</strong> {weather.current.temperature} Celsium
+      </p>
+      <img
+        src={weather.current.weather_icons[0]}
+        alt={`${city} weather`}
+        width="100"
+      />
+      <p>
+        <strong>Wind:</strong> {weather.current.wind_speed} kph direction{" "}
+        {weather.current.wind_dir}
+      </p>
+    </div>
+  );
+};
+
 const CountryCard = ({ country }) => (
   <div>
     <h2>{country.name}</h2>
@@ -19,6 +58,7 @@ const CountryCard = ({ country }) => (
       ))}
     </ul>
     <img src={country.flag} alt={`${country.demonym} flag`} width="200" />
+    <Weather city={country.capital} />
   </div>
 );
 
