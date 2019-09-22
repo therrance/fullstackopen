@@ -22,14 +22,36 @@ const App = () => {
   const addPerson = event => {
     event.preventDefault();
 
-    if (persons.find(person => person.name === newPerson.name)) {
-      alert(`${newPerson.name} is already added to phonebook`);
+    const newPersonObject = {
+      name: newPerson.name,
+      number: newPerson.number
+    };
+
+    const existedPerson = persons.find(
+      person => person.name === newPerson.name
+    );
+
+    if (existedPerson) {
+      if (
+        window.confirm(
+          `${existedPerson.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        newPersonObject.id = existedPerson.id;
+
+        phonebookService
+          .updateEntry(existedPerson.id, newPersonObject)
+          .then(data => {
+            setPersons(
+              persons
+                .filter(person => person.id !== existedPerson.id)
+                .concat(data)
+            );
+            setNewPerson({ name: "", number: "" });
+          });
+      }
     } else {
-      const newPersonObject = {
-        name: newPerson.name,
-        number: newPerson.number,
-        id: persons[persons.length - 1].id + 1
-      };
+      newPersonObject.id = persons[persons.length - 1].id + 1;
 
       phonebookService.create(newPersonObject).then(data => {
         setPersons(persons.concat(data));
