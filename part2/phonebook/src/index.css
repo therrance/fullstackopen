@@ -23,7 +23,7 @@ h1 {
   font-size: 15px;
 }
 
-.error {
+.notification {
   color: green;
   background: lightgray;
   font-size: 20px;

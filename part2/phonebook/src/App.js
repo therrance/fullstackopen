@@ -9,7 +9,10 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [newPerson, setNewPerson] = useState({ name: "", number: "" });
   const [filter, setFilter] = useState("");
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState({
+    message: null,
+    isError: null
+  });
 
   useEffect(() => {
     phonebookService.getAll().then(phones => setPersons(phones));
@@ -44,8 +47,14 @@ const App = () => {
         phonebookService
           .updateEntry(existedPerson.id, newPersonObject)
           .then(data => {
-            setNotification(`Added ${newPerson.name}`);
-            setTimeout(() => setNotification(null), 5000);
+            setNotification({
+              message: `Added ${newPerson.name}`,
+              isError: false
+            });
+            setTimeout(
+              () => setNotification({ message: null, isError: null }),
+              5000
+            );
             setPersons(
               persons
                 .filter(person => person.id !== existedPerson.id)
@@ -58,8 +67,14 @@ const App = () => {
       newPersonObject.id = persons[persons.length - 1].id + 1;
 
       phonebookService.create(newPersonObject).then(data => {
-        setNotification(`Added ${newPerson.name}`);
-        setTimeout(() => setNotification(null), 5000);
+        setNotification({
+          message: `Added ${newPerson.name}`,
+          isError: false
+        });
+        setTimeout(
+          () => setNotification({ message: null, isError: null }),
+          5000
+        );
         setPersons(persons.concat(data));
         setNewPerson({ name: "", number: "" });
       });
@@ -73,7 +88,18 @@ const App = () => {
     if (window.confirm(`Delete ${personToDelete.name} ?`)) {
       phonebookService
         .deleteEntry(id)
-        .then(() => setPersons(persons.filter(person => person.id !== id)));
+        .then(() => setPersons(persons.filter(person => person.id !== id)))
+        .catch(error => {
+          setNotification({
+            message: `the note '${personToDelete.name}' was already deleted from server`,
+            isError: true
+          });
+          setTimeout(
+            () => setNotification({ message: null, isError: null }),
+            5000
+          );
+          setPersons(persons.filter(person => person.id !== id));
+        });
     }
   };
 
@@ -81,7 +107,10 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
-      <Notification message={notification} />
+      <Notification
+        message={notification.message}
+        isError={notification.isError}
+      />
 
       <Filter filterValue={filter} handleFilter={handleFilter} />
       <h2>Add a new</h2>
