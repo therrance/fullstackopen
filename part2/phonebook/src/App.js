@@ -41,9 +41,12 @@ const App = () => {
   const handleFilter = event => setFilter(event.target.value);
 
   const handleDelete = id => {
-    phonebookService
-      .deleteEntry(id)
-      .then(() => setPersons(persons.filter(person => person.id !== id)));
+    const personToDelete = persons.find(person => person.id === id);
+    if (window.confirm(`Delete ${personToDelete.name} ?`)) {
+      phonebookService
+        .deleteEntry(id)
+        .then(() => setPersons(persons.filter(person => person.id !== id)));
+    }
   };
 
   return (
