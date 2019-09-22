@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 import phonebookService from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newPerson, setNewPerson] = useState({ name: "", number: "" });
   const [filter, setFilter] = useState("");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     phonebookService.getAll().then(phones => setPersons(phones));
@@ -42,6 +44,8 @@ const App = () => {
         phonebookService
           .updateEntry(existedPerson.id, newPersonObject)
           .then(data => {
+            setNotification(`Added ${newPerson.name}`);
+            setTimeout(() => setNotification(null), 5000);
             setPersons(
               persons
                 .filter(person => person.id !== existedPerson.id)
@@ -54,6 +58,8 @@ const App = () => {
       newPersonObject.id = persons[persons.length - 1].id + 1;
 
       phonebookService.create(newPersonObject).then(data => {
+        setNotification(`Added ${newPerson.name}`);
+        setTimeout(() => setNotification(null), 5000);
         setPersons(persons.concat(data));
         setNewPerson({ name: "", number: "" });
       });
@@ -74,6 +80,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={notification} />
+
       <Filter filterValue={filter} handleFilter={handleFilter} />
       <h2>Add a new</h2>
       <PersonForm
