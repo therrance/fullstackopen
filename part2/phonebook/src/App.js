@@ -11,29 +11,29 @@ const App = () => {
   const [filter, setFilter] = useState("");
   const [notification, setNotification] = useState({
     message: null,
-    isError: null
+    isError: null,
   });
 
   useEffect(() => {
-    phonebookService.getAll().then(phones => setPersons(phones));
+    phonebookService.getAll().then((phones) => setPersons(phones));
   }, []);
 
   const personsToShow = filter.length
-    ? persons.filter(person =>
+    ? persons.filter((person) =>
         person.name.toLowerCase().includes(filter.toLowerCase())
       )
     : persons;
 
-  const addPerson = event => {
+  const addPerson = (event) => {
     event.preventDefault();
 
     const newPersonObject = {
       name: newPerson.name,
-      number: newPerson.number
+      number: newPerson.number,
     };
 
     const existedPerson = persons.find(
-      person => person.name === newPerson.name
+      (person) => person.name === newPerson.name
     );
 
     if (existedPerson) {
@@ -46,10 +46,10 @@ const App = () => {
 
         phonebookService
           .updateEntry(existedPerson.id, newPersonObject)
-          .then(data => {
+          .then((data) => {
             setNotification({
               message: `Added ${newPerson.name}`,
-              isError: false
+              isError: false,
             });
             setTimeout(
               () => setNotification({ message: null, isError: null }),
@@ -57,7 +57,7 @@ const App = () => {
             );
             setPersons(
               persons
-                .filter(person => person.id !== existedPerson.id)
+                .filter((person) => person.id !== existedPerson.id)
                 .concat(data)
             );
             setNewPerson({ name: "", number: "" });
@@ -66,10 +66,10 @@ const App = () => {
     } else {
       newPersonObject.id = persons[persons.length - 1].id + 1;
 
-      phonebookService.create(newPersonObject).then(data => {
+      phonebookService.create(newPersonObject).then((data) => {
         setNotification({
           message: `Added ${newPerson.name}`,
-          isError: false
+          isError: false,
         });
         setTimeout(
           () => setNotification({ message: null, isError: null }),
@@ -81,24 +81,24 @@ const App = () => {
     }
   };
 
-  const handleFilter = event => setFilter(event.target.value);
+  const handleFilter = (event) => setFilter(event.target.value);
 
-  const handleDelete = id => {
-    const personToDelete = persons.find(person => person.id === id);
+  const handleDelete = (id) => {
+    const personToDelete = persons.find((person) => person.id === id);
     if (window.confirm(`Delete ${personToDelete.name} ?`)) {
       phonebookService
         .deleteEntry(id)
-        .then(() => setPersons(persons.filter(person => person.id !== id)))
-        .catch(error => {
+        .then(() => setPersons(persons.filter((person) => person.id !== id)))
+        .catch((error) => {
           setNotification({
             message: `the note '${personToDelete.name}' was already deleted from server`,
-            isError: true
+            isError: true,
           });
           setTimeout(
             () => setNotification({ message: null, isError: null }),
             5000
           );
-          setPersons(persons.filter(person => person.id !== id));
+          setPersons(persons.filter((person) => person.id !== id));
         });
     }
   };

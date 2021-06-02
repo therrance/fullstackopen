@@ -5,10 +5,10 @@ const Notification = ({ message, isError }) => {
     return null;
   }
 
-  const errorStyle = { color: "red" };
+  const errorStyle = isError ? { color: "red" } : {};
 
   return (
-    <div className="notification" style={isError && errorStyle}>
+    <div className="notification" style={errorStyle}>
       {message}
     </div>
   );
