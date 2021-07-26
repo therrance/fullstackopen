@@ -66,18 +66,31 @@ const App = () => {
     } else {
       newPersonObject.id = persons[persons.length - 1].id + 1;
 
-      phonebookService.create(newPersonObject).then((data) => {
-        setNotification({
-          message: `Added ${newPerson.name}`,
-          isError: false,
+      phonebookService
+        .create(newPersonObject)
+        .then((data) => {
+          setNotification({
+            message: `Added ${newPerson.name}`,
+            isError: false,
+          });
+          setTimeout(
+            () => setNotification({ message: null, isError: null }),
+            5000
+          );
+          setPersons(persons.concat(data));
+          setNewPerson({ name: "", number: "" });
+        })
+        .catch((error) => {
+          const errorMessage = error.response.data.error;
+          setNotification({
+            message: errorMessage,
+            isError: true,
+          });
+          setTimeout(
+            () => setNotification({ message: null, isError: null }),
+            5000
+          );
         });
-        setTimeout(
-          () => setNotification({ message: null, isError: null }),
-          5000
-        );
-        setPersons(persons.concat(data));
-        setNewPerson({ name: "", number: "" });
-      });
     }
   };
 
